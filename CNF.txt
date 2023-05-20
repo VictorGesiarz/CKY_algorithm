@@ -1,0 +1,11 @@
+S -> a | XA | AX | b
+A -> RB
+B -> AX | b | a
+X -> a
+R -> XB
+
+S -> AB | CD | CB | SS
+A -> BC | a
+B -> SC | b
+C -> DD | b
+D -> BA
