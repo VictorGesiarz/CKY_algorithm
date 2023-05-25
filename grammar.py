@@ -232,25 +232,26 @@ class Grammar:
         
         new_productions = {}
         
-        for left, right in self.productions.items():
-            num_variable = 1
-            for i, term in enumerate(right):
-                characters = term.split()
-                if len(characters) == 2 and any(char in self.terminals for char in characters):  # Comprobamos que estemos en un caso que tengamos que arreglar
-                    index = 0 if characters[0] in self.terminals else 1
-                    terminal = characters[index]
-                    
-                    new_variable = left + '.' + str(num_variable)   # Creamos el nombre de la nueva variable añadiendo un punto y un número
-                    num_variable += 1  
-                    for left1, right1 in new_productions.items():   # Si ya existe una nueva regla que lleve al mismo terminal, no creamos una nueva variable
-                        if right1[0] == terminal:
-                            new_variable = left1
-                            num_variable -= 1
-                            break  
-                    
-                    new_production = [characters[index - 1]] + [new_variable]
-                    right[i] = ' '.join(letter for letter in new_production)    # Actualizamos el término para que coincida
-                    new_productions[new_variable] = [terminal]                  # Añadimos la regla
+        for _ in range(2):      # We repeat this operation 2 times in case we are left with any rule like : A -> a a
+            for left, right in self.productions.items():
+                num_variable = 1
+                for i, term in enumerate(right):
+                    characters = term.split()
+                    if len(characters) == 2 and any(char in self.terminals for char in characters):  # Comprobamos que estemos en un caso que tengamos que arreglar
+                        index = 0 if characters[0] in self.terminals else 1
+                        terminal = characters[index]
+                        
+                        new_variable = left + '.' + str(num_variable)   # Creamos el nombre de la nueva variable añadiendo un punto y un número
+                        num_variable += 1  
+                        for left1, right1 in new_productions.items():   # Si ya existe una nueva regla que lleve al mismo terminal, no creamos una nueva variable
+                            if right1[0] == terminal:
+                                new_variable = left1
+                                num_variable -= 1
+                                break  
+                        
+                        new_production = [characters[index - 1]] + [new_variable]
+                        right[i] = ' '.join(letter for letter in new_production)    # Actualizamos el término para que coincida
+                        new_productions[new_variable] = [terminal]                  # Añadimos la regla
 
         # Actualizamos nuestro diccionario
         for left, right in new_productions.items():

@@ -13,10 +13,5 @@ result = G.is_phrase_in_grammar(phrase)
 print('Phrase: ' + phrase + '\n')
 
 print(result[0])
-
-if result:
-    print(result[0])
-
+if result[0]:
     G.trace(result[1], phrase)
-else:
-    print(result)
