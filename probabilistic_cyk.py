@@ -1,16 +1,15 @@
 from collections import namedtuple
+from math import log, exp
+rule = namedtuple('rule', ['lhs', 'rhs1', "rhs2", "prob"])
 
-rule = namedtuple('rule', ['lhs', 'rhs1', "rhs2"])
 
-
-def CYK(I, G, _r):
+def probabilistic_cyk(I, G, _r):
     n = len(I) # Longitud de la cadena de entrada
     r = _r # Nº de elementos no terminales (no reglas) (ej: A, B, C, D, E)
 
     G_T  = []
     G_NT = []
 
-    # Separar las reglas en terminales y no terminales
     for rule in G:
         if rule.rhs2 is None:
             G_T.append(rule)
@@ -18,46 +17,49 @@ def CYK(I, G, _r):
             G_NT.append(rule)
 
     # Crear la matriz de programación dinámica
-    P = [[[False for _ in range(r)] for _ in range(n - i)] for i in range(n)]
+    P = [[[0 for _ in range(r)] for _ in range(n - i)] for i in range(n)]
 
-    # Crear la matriz de backtracking
-    # Con ella podremos reconstruir el árbol de derivación
     back = [[[[] for _ in range(r)] for _ in range(n - i)] for i in range(n)]
 
-    # Inicializar la matriz de programación dinámica
-    # Para cada palabra de entrada
+
     for s in range(n):
 
-        # Comprobamos si existe alguna regla de la forma "A --> a" en nuestra gramática
-        # Donde el no terminal "a" es igual al símbolo de entrada
-        # Para todas las reglas que se cumplan, marcamos la casilla correspondiente
-        # de la matriz de programación dinámica como True
-
-        # Con esto determinamos los valores de la  primera fila de la matriz de programación dinámica
-
-        for lhs, rhs1, rhs2  in G_T:
+        for lhs, rhs1, rhs2, prob  in G_T:
             terminal = rhs1
             if terminal == I[s]:
-                P[0][s][lhs] = True
+                P[0][s][lhs] = log(prob)
 
-
-    for l in range(1, n):            # Longitud de la subcadena
-        for s in range(n-l + 1):     # Posición de la subcadena
-            for p in range(1, l +1): # Partición de la subcadena
-                if s >= n - l:       # Si la posición de la subcadena es mayor que la longitud de la subcadena             
+    print(P[0])
+    for l in range(1, n):           
+        for s in range(n-l + 1):    
+            for p in range(1, l +1):
+                if s >= n - l:                
                     continue
 
-                for lhs, rhs1, rhs2 in G_NT: # Para todas las reglas de la forma "A --> BC" en nuestra gramática
-                    
-                    if P[p - 1][s][rhs1] and P[l-p][s+p][rhs2]: # Si existe una partición de la subcadena que cumpla con la regla
-                        P[l][s][lhs] = True
-                        back[l][s][lhs].append((p, s, l, lhs, rhs1, rhs2))
+                last_prob = None
+                for lhs, rhs1, rhs2, rule_prob in G_NT:
+                    if P[p - 1][s][rhs1] and P[l-p][s+p][rhs2]:
 
-    if any(P[n- 1][0]):
-        print("Input is a member of the language")
-        return back
-    else:
-        return "Input is not a member of the language"
+                        prob = P[p - 1][s][rhs1] + P[l-p][s+p][rhs2] + log(rule_prob)
+                        if last_prob  is not None:
+
+                            if last_prob >= prob:
+                                continue
+                        
+                        last_prob = prob
+
+                        
+                if last_prob is None:
+                    continue
+
+                
+                P[l][s][lhs] = last_prob
+                back[l][s][lhs].append((p, s, l, lhs, rhs1, rhs2))
+
+    for prob in P[n-1][0]:
+        if prob:
+            return exp(prob), back
+    return False, back
 
 
 from bintree import BinTree

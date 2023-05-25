@@ -55,8 +55,8 @@ def CYK(I, G, _r):
 
     if any(P[n- 1][0]):
         return True, back
-    else:
-        return False
+    
+    return False, back
 
 
 from bintree import BinTree
