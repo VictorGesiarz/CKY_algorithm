@@ -1,0 +1,16 @@
+digraph {
+	node [shape=circle]
+	"820ba493-7317-4826-8431-a0a2ea308724" [label=C]
+	"f45cd89a-e956-4d8f-b0c3-f6eca3243e63" [label=a]
+	"820ba493-7317-4826-8431-a0a2ea308724" -> "f45cd89a-e956-4d8f-b0c3-f6eca3243e63"
+	"66b1f7b7-55ef-4882-9ad3-fe31683de03f" [label=B]
+	"e2b92ff9-d1b0-42fa-a8af-438aba1a19b0" [label=B]
+	"9b8dc816-ef58-4f0d-9aa3-77a73a358d02" [label=b]
+	"e2b92ff9-d1b0-42fa-a8af-438aba1a19b0" -> "9b8dc816-ef58-4f0d-9aa3-77a73a358d02"
+	"705d31d0-560a-4f8e-b69b-c1c499fdb68b" [label=a]
+	"e2b92ff9-d1b0-42fa-a8af-438aba1a19b0" -> "705d31d0-560a-4f8e-b69b-c1c499fdb68b"
+	"66b1f7b7-55ef-4882-9ad3-fe31683de03f" -> "e2b92ff9-d1b0-42fa-a8af-438aba1a19b0"
+	"ec7789c3-ffd8-4e9e-9a20-957d6e165e87" [label=a]
+	"66b1f7b7-55ef-4882-9ad3-fe31683de03f" -> "ec7789c3-ffd8-4e9e-9a20-957d6e165e87"
+	"820ba493-7317-4826-8431-a0a2ea308724" -> "66b1f7b7-55ef-4882-9ad3-fe31683de03f"
+}
