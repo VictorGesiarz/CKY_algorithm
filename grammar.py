@@ -280,6 +280,8 @@ class Grammar:
         self.__convert_non_terminal_with_terminal()
         print(self)
 
+        self.convert_to_namedtuples()
+
         print("- - Finished - -\n")
         
 

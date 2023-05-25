@@ -8,11 +8,11 @@ print(G)
 
 G.convert_to_cnf()
 
-G.convert_to_namedtuples()
-
 phrase = 'ababab'
 result = G.is_phrase_in_grammar(phrase)
-print(phrase)
+print('Phrase: ' + phrase + '\n')
+
+print(result[0])
 
 if result:
     print(result[0])
