@@ -4,7 +4,7 @@ from read import *
 # Example usage
 G = Grammar()
 G.set_grammar(read_txt())
-print(G.productions)
+print(G)
 
 G.convert_to_cnf()
 
