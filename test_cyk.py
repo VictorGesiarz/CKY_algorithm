@@ -1,4 +1,4 @@
-from main import CYK, rule, read_back, trace_to_bintree
+from cyk import CYK, rule, read_back, trace_to_bintree
 
 
 def example1():
@@ -30,9 +30,13 @@ def example1():
         rule(A, B, A),
         rule(B, B, A)]
     
-    result = CYK(I, G, 5)
-    print(result)
-    trace_to_bintree(result, convert, I)
+    result, back = CYK(I, G, 5)
+    
+    if result:
+        print("Input is a member of the language")
+        trace_to_bintree(back, convert, I)
+    else:
+        print("Input is not a member of the language")
 
     
 
@@ -140,4 +144,4 @@ def example3():
     trace_to_bintree(result, convert, I)
 
 
-example3()
+example1()

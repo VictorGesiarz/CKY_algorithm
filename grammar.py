@@ -1,5 +1,5 @@
 import itertools
-from main import *
+from cyk import *
 
 # Función auxiliar que se usa a la hora de eliminar producciones vacias 
 # Con esta función calculamos todas las posibilidades que se generan cuando 
