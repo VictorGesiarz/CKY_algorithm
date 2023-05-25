@@ -1,4 +1,5 @@
 import itertools
+from main import *
 
 # Función auxiliar que se usa a la hora de eliminar producciones vacias 
 # Con esta función calculamos todas las posibilidades que se generan cuando 
@@ -138,24 +139,27 @@ class Grammar:
         substitute = {}
         remove_non_terminal = {}
     
-        # Primero identificamos los dos casos y los guardamos en los diccionarios de arriba. 
+        # Identificamos el primer caso
         for left, right in self.productions.items():
             for term in right:
-                if len(right) > 1 and len(term) == 1 and term in self.non_terminals:    # Segundo caso
-                    if term not in substitute:
-                        substitute[term] = self.productions[term]
-                elif len(right) == 1 and len(term) == 1 and term in self.non_terminals: # Primer caso
-                        remove_non_terminal[left] = right
-                        self.productions[left] = [] 
-                        self.non_terminals.remove(left)
+                if len(right) == 1 and len(term) == 1 and term in self.non_terminals:
+                    remove_non_terminal[left] = right           # Si la regla solo tiene una producción y dicha 
+                    self.productions[left] = []                 # producción es un no terminal, lo eliminamos y lo añadimos a la lista
+                    self.non_terminals.remove(left)
 
         # Eliminamos las reglas que se hayan correspondido con el primer caso
         for remove, subst in remove_non_terminal.items():
             for left, right in self.productions.items():
                 for i, term in enumerate(right):
-                    if term == remove:
-                        right += subst          # Añadimos la producción de la regla que vamos a eliminar
-                        right.remove(term)      # Eliminamos dicha regla de el término en el que estamos
+                    if remove in term:                          # Añadimos la producción de la regla que vamos a eliminar
+                        right[i] = term.replace(remove, ' '.join(letter for letter in subst))   # Eliminamos dicha regla de el término en el que estamos
+
+        # Ahora identificamos el segundo caso
+        for left, right in self.productions.items():
+            for term in right:
+                if len(right) > 1 and len(term) == 1 and term in self.non_terminals:    
+                    if term not in substitute:                      # Si la regla tiene varias producciones y una de ellas
+                        substitute[term] = self.productions[term]   # es un no terminal, lo añadimos a la lista para sustituirlo.
 
         # Este caso es por si se da, por ejemplo: B -> A B | B | c ..., 
         # para que no empiece a sustituir la B a si misma en bucle
@@ -227,7 +231,7 @@ class Grammar:
                     new_variable = left + '.' + str(num_variable)   # Creamos el nombre de la nueva variable añadiendo un punto y un número
                     num_variable += 1  
                     for left1, right1 in new_productions.items():   # Si ya existe una nueva regla que lleve al mismo terminal, no creamos una nueva variable
-                        if right1 == terminal:
+                        if right1[0] == terminal:
                             new_variable = left1
                             num_variable -= 1
                             break  
@@ -267,14 +271,18 @@ class Grammar:
         print("- - Finished - -")
         
 
+    def is_phrase_in_grammar(self, phrase):
+        pass
+
 
 # Example usage
 G = Grammar()
-G.add_production('A', 'D B')
-G.add_production('B', 'A')
-G.add_production('B', 'a')
-G.add_production('C', 'B c')
-G.add_production('D', 'A a')
+G.add_production('A', 'B D a')
+G.add_production('A', 'D')
+G.add_production('B', 'C b C')
+G.add_production('C', '3')
+G.add_production('C', 'A')
+G.add_production('D', 'B')
 
 
 print(G)
