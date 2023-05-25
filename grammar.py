@@ -30,6 +30,7 @@ class Grammar:
         self.non_terminals = set()  # Aquí guardamos todos los símbolos no terminales (A | VB | N ...)
         self.terminals = set()      # Aquí guardamos todos los síbmolos terminales (a | b | coche ...)
         self.productions = dict()   # Aquí guardamos la gramática en forma de diccionario (A: a | b, B: A | B a ...)
+        self.namedtuples = None     # Traducimos el diccionario a la forma con la que trabaja nuestro algoritmo, cuando este en CNF
 
 
     def __repr__(self) -> str:      # Esta función nos sirve para dibujar de forma bonita la gramática en la terminal.
@@ -47,7 +48,7 @@ class Grammar:
                 print(f'    {key} -> {production}', end='')
                 print()
         return ''
-    
+
     
     def is_grammar_correct(self):   # Esta función sirve para comprobar que la gramática sea correcta, es decir,
                                     # que por cada parte derecha de las reglas que apunte a un no terminal, 
@@ -271,20 +272,44 @@ class Grammar:
         print("- - Finished - -")
         
 
+    def convert_to_namedtuples(self):
+        rules = []
+        nums = {letter: i for i, letter in enumerate(self.productions)}
+
+        for left, right in self.productions.items():
+            for term in right:
+                symbols = term.split()
+                lhs = nums[left]
+
+                if len(symbols) > 1: 
+                    rhs1 = symbols[0] if symbols[0] not in nums else nums[symbols[0]]
+                    rhs2 = symbols[1] if symbols[1] not in nums else nums[symbols[1]]
+                    rules.append(rule(lhs, rhs1, rhs2))
+                else:
+                    rules.append(rule(lhs, symbols[0], None))
+
+        self.namedtuples = rules
+
     def is_phrase_in_grammar(self, phrase):
-        pass
+        result = CYK(phrase, self.namedtuples, len(self.namedtuples))
+        return result
+
+    def trace(self, result, phrase):
+        convert = {i: letter for i, letter in enumerate(self.productions)}
+        trace_to_bintree(result, convert, phrase)
 
 
 # Example usage
 G = Grammar()
-G.add_production('A', 'B D a')
-G.add_production('A', 'D')
-G.add_production('B', 'C b C')
-G.add_production('C', '3')
-G.add_production('C', 'A')
-G.add_production('D', 'B')
+G.add_production('A', 'a')
+G.add_production('B', 'b')
+G.add_production('C', 'A B C')
 
 
 print(G)
 
 G.convert_to_cnf()
+
+G.convert_to_namedtuples()
+
+print(G.is_phrase_in_grammar('ababab'))
