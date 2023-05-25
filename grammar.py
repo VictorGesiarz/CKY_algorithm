@@ -60,8 +60,9 @@ class Grammar:
                     if symbol.isupper():
                         non_terminals.add(symbol)
 
-        if any(non_terminal not in self.non_terminals for non_terminal in non_terminals):
-            return False
+        for non_terminal in non_terminals:
+            if non_terminal not in self.non_terminals:
+                return False
         return True
     
 
@@ -72,6 +73,16 @@ class Grammar:
         for symbol in rhs.split():
             if not symbol.isupper():
                 self.terminals.add(symbol)  # Añadimos el terminal a su list
+
+
+    def set_grammar(self, grammar):         # Con esta función podemos definir la gramática entera pasandole un diccionario
+        for left, right in grammar.items():
+            self.productions[left] = right
+            self.non_terminals.add(left)
+            for term in right:
+                for symbol in term.split():
+                    if not symbol.isupper():
+                        self.terminals.add(symbol)
 
 
     def __remove_epsilon_productions(self):     # Primer paso en la conversión a Chomsky Normal Form. 
@@ -269,10 +280,10 @@ class Grammar:
         self.__convert_non_terminal_with_terminal()
         print(self)
 
-        print("- - Finished - -")
+        print("- - Finished - -\n")
         
 
-    def convert_to_namedtuples(self):
+    def convert_to_namedtuples(self):   # Función para convertir de diccionario al formato de namedtuples usado.
         rules = []
         nums = {letter: i for i, letter in enumerate(self.productions)}
 
@@ -290,26 +301,10 @@ class Grammar:
 
         self.namedtuples = rules
 
-    def is_phrase_in_grammar(self, phrase):
+    def is_phrase_in_grammar(self, phrase):     # Función para ejecutar el algoritmo con la gramatica y una frase
         result = CYK(phrase, self.namedtuples, len(self.namedtuples))
         return result
 
-    def trace(self, result, phrase):
+    def trace(self, result, phrase):            # Función para generar el árbol segun el resultado de una frase
         convert = {i: letter for i, letter in enumerate(self.productions)}
         trace_to_bintree(result, convert, phrase)
-
-
-# Example usage
-G = Grammar()
-G.add_production('A', 'a')
-G.add_production('B', 'b')
-G.add_production('C', 'A B C')
-
-
-print(G)
-
-G.convert_to_cnf()
-
-G.convert_to_namedtuples()
-
-print(G.is_phrase_in_grammar('ababab'))
